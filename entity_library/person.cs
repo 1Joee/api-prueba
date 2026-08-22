@@ -3,7 +3,7 @@ public abstract class Person
     public string Name {get; set;}
     public int Age {get; set;}
     public string Dni {get; set;}
-
+    public Person () {}
     protected Person (string name, int age, string dni)
     {
         Name = name;
