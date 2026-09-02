@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using entity_library;
+using entity_library; 
 
-public class AppDbContext : DbContext {
-    public AppDbContext(DbContextOptions options) : base(options) { } // No tiene que ir nada dentro de las llaves
+namespace dao_library; 
 
+public class AppDbContext : DbContext 
+{
+    public AppDbContext(DbContextOptions options) : base(options) { } 
+    public DbSet<User> Users { get; set; } 
     
-    public DbSet<Entity> Entities { get; set; } // Acá colocaremos la entidad que queremos guardar en la base de datos (se debe hacer con c/u de ellas)
+    // (Si tenés otras entidades como Activity, Course, etc., las agregás acá abajo de la misma forma)
+    // public DbSet<Activity> Activities { get; set; }
 }

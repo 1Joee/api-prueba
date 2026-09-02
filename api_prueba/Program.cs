@@ -1,14 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using dao_library; 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar Controllers
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 builder.Services.AddControllers();
 
-// Agregar OpenAPI nativo de .NET
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configurar el pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

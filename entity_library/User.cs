@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 public class User : Person
 {
     [Required(ErrorMessage = "El email es obligatorio.")]
@@ -11,11 +12,5 @@ public class User : Person
     public string Password { get; set; }
 
     [Required(ErrorMessage = "El rol es obligatorio.")]
-    public RoleType Role { get; set; }
-}
-public class User : Person
-{
-    public string Email { get; set; }
-    public string Password { get; set; }
     public RoleType Role { get; set; }
 }
