@@ -1,0 +1,21 @@
+<div class="user-list-container">
+  <h2>Lista de usuarios</h2>
+
+  @if (users$ | async; as users) {
+    @if (users.length > 0) {
+      <ul class="user-list">
+        @for (user of users; track user.id) {
+          <li class="user-card">
+            <p class="user-name">{{ user.name }}</p>
+            <p class="user-email">{{ user.email }}</p>
+            <span class="user-role">{{ user.role }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty-message">No hay usuarios registrados.</p>
+    }
+  } @else {
+    <p class="loading-message">Cargando usuarios...</p>
+  }
+</div>
