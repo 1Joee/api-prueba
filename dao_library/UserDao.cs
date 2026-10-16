@@ -11,6 +11,11 @@ public class UserDAO
         _context = context;
     }
 
+    public List<User> GetAllUsers()
+    {
+        return _context.Users.ToList();
+    }
+
     public User? GetUserByEmail(string email)
     {
         return _context.Users.FirstOrDefault(u => u.Email == email);

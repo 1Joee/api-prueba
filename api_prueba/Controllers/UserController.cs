@@ -20,6 +20,28 @@ public class UserController : ControllerBase
         _jwtService = jwtService;
     }
 
+    [HttpGet]
+    public ActionResult<List<UserResponseDTO>> GetAllUsers()
+    {
+        List<UserResponseDTO> users = _userDAO.GetAllUsers()
+            .Select(u => ToResponseDTO(u))
+            .ToList();
+
+        return Ok(users);
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult<UserResponseDTO> GetUserById(int id)
+    {
+        User? user = _userDAO.GetUserById(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(ToResponseDTO(user));
+    }
+
     [HttpPost]
     public ActionResult<UserResponseDTO> CreateUser(User user)
     {
