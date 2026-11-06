@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Herramientas de asistencia (configuracion local)
+.claude/
+.serena/
