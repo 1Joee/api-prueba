@@ -1,35 +1,47 @@
-using System.Collections.Generic;
-using System.Linq;
+namespace dao_library;
+using entity_library;
 
-namespace dao_library
+public class TeamDAO
 {
-    public class TeamDao : IDao<Team>
+    public List<Team> GetAllTeams()
     {
-        private static List<Team> _teams = new List<Team>();
+        return MockDatabase.Teams;
+    }
 
-        public List<Team> GetAll() => _teams;
+    public Team? GetTeamById(int id)
+    {
+        return MockDatabase.Teams.FirstOrDefault(x => x.Id == id);
+    }
 
-        public Team GetById(int id)
+    public Team CreateTeam(Team entity)
+    {
+        int lastId = MockDatabase.Teams.Count == 0 ? 0 : MockDatabase.Teams.Max(x => x.Id);
+        entity.Id = lastId + 1;
+        MockDatabase.Teams.Add(entity);
+        return entity;
+    }
+
+    public bool UpdateTeam(Team entity)
+    {
+        Team? existing = GetTeamById(entity.Id);
+        if (existing == null)
         {
-            return _teams.ElementAtOrDefault(id)!;
+            return false;
         }
+        existing.Name = entity.Name;
+        existing.Category = entity.Category;
+        existing.Players = entity.Players;
+        return true;
+    }
 
-        public void Add(Team team) => _teams.Add(team);
-
-        public void Delete(int id)
+    public bool DeleteTeamById(int id)
+    {
+        Team? existing = GetTeamById(id);
+        if (existing == null)
         {
-            var team = GetById(id);
-            if (team != null) _teams.Remove(team);
+            return false;
         }
-
-        public void Update(Team team)
-        {
-            var existingTeam = _teams.FirstOrDefault(t => t.Name == team.Name);
-            if (existingTeam != null)
-            {
-                existingTeam.Category = team.Category;
-                existingTeam.Players = team.Players;
-            }
-        }
+        MockDatabase.Teams.Remove(existing);
+        return true;
     }
 }

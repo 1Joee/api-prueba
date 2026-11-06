@@ -12,6 +12,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<UserDAO>();
+builder.Services.AddScoped<PlayerDAO>();
+builder.Services.AddScoped<TrainerDAO>();
+builder.Services.AddScoped<StudentDAO>();
+builder.Services.AddScoped<TeamDAO>();
+builder.Services.AddScoped<CourseDAO>();
 builder.Services.AddScoped<JwtService>();
 
 string jwtKey = builder.Configuration["Jwt:Key"];

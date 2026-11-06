@@ -1,37 +1,47 @@
+namespace dao_library;
 using entity_library;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace dao_library
+public class CourseDAO
 {
-    public class CourseDao : IDao<Course>
+    public List<Course> GetAllCourses()
     {
-        private static List<Course> _courses = new List<Course>
+        return MockDatabase.Courses;
+    }
+
+    public Course? GetCourseById(int id)
+    {
+        return MockDatabase.Courses.FirstOrDefault(x => x.Id == id);
+    }
+
+    public Course CreateCourse(Course entity)
+    {
+        int lastId = MockDatabase.Courses.Count == 0 ? 0 : MockDatabase.Courses.Max(x => x.Id);
+        entity.Id = lastId + 1;
+        MockDatabase.Courses.Add(entity);
+        return entity;
+    }
+
+    public bool UpdateCourse(Course entity)
+    {
+        Course? existing = GetCourseById(entity.Id);
+        if (existing == null)
         {
-            new Course { Id = 1, Name = "Programación III" }
-        };
-
-        public List<Course> GetAll() => _courses;
-
-        public Course GetById(int id) => _courses.FirstOrDefault(c => c.Id == id)!;
-
-        public void Add(Course entity) => _courses.Add(entity);
-
-        public void Update(Course entity)
-        {
-            var existing = GetById(entity.Id);
-            if (existing != null)
-            {
-                existing.Name = entity.Name;
-                existing.Students = entity.Students;
-                existing.Activities = entity.Activities;
-            }
+            return false;
         }
+        existing.Name = entity.Name;
+        existing.Students = entity.Students;
+        existing.Activities = entity.Activities;
+        return true;
+    }
 
-        public void Delete(int id)
+    public bool DeleteCourseById(int id)
+    {
+        Course? existing = GetCourseById(id);
+        if (existing == null)
         {
-            var existing = GetById(id);
-            if (existing != null) _courses.Remove(existing);
+            return false;
         }
+        MockDatabase.Courses.Remove(existing);
+        return true;
     }
 }

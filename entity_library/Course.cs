@@ -1,12 +1,37 @@
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace entity_library
+namespace entity_library;
+
+public class Course
 {
-    public class Course
+    private int id = 0;
+    private string name = "";
+    private List<Student> students = new List<Student>();
+    private List<Activity> activities = new List<Activity>();
+
+    public int Id
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public List<Student> Students { get; set; } = new List<Student>();
-        public List<Activity> Activities { get; set; } = new List<Activity>();
+        get { return id; }
+        set { id = value; }
+    }
+
+    [Required]
+    [StringLength(100, MinimumLength = 3)]
+    public string Name
+    {
+        get { return name; }
+        set { name = value; }
+    }
+
+    public List<Student> Students
+    {
+        get { return students; }
+        set { students = value; }
+    }
+
+    public List<Activity> Activities
+    {
+        get { return activities; }
+        set { activities = value; }
     }
 }

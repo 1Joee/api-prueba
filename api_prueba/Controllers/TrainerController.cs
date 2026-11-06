@@ -1,44 +1,65 @@
-using Microsoft.AspNetCore.Mvc;
+namespace api_prueba.Controllers;
 using dao_library;
-using System.Collections.Generic;
+using entity_library;
+using Microsoft.AspNetCore.Mvc;
 
-namespace api_prueba.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class TrainerController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class TrainerController : ControllerBase
+    private readonly ILogger<TrainerController> _logger;
+    private readonly TrainerDAO _trainerDAO;
+
+    public TrainerController(ILogger<TrainerController> logger, TrainerDAO trainerDAO)
     {
-        private readonly TrainerDao _trainerDao = new TrainerDao();
+        _logger = logger;
+        _trainerDAO = trainerDAO;
+    }
 
-        [HttpGet]
-        public ActionResult<List<Trainer>> GetAll() => Ok(_trainerDao.GetAll());
+    [HttpGet]
+    public ActionResult<List<Trainer>> GetAll()
+    {
+        return Ok(_trainerDAO.GetAllTrainers());
+    }
 
-        [HttpGet("{id}")]
-        public ActionResult<Trainer> GetById(int id)
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        Trainer? trainer = _trainerDAO.GetTrainerById(id);
+        if (trainer == null)
         {
-            var trainer = _trainerDao.GetById(id);
-            return trainer == null ? NotFound($"No se encontró el entrenador con ID {id}") : Ok(trainer);
+            return NotFound();
         }
+        return Ok(trainer);
+    }
 
-        [HttpPost]
-        public ActionResult Add([FromBody] Trainer trainer)
-        {
-            _trainerDao.Add(trainer);
-            return Ok(new { message = "Entrenador agregado con éxito" });
-        }
+    [HttpPost]
+    public IActionResult Create(Trainer trainer)
+    {
+        Trainer created = _trainerDAO.CreateTrainer(trainer);
+        return Created($"/api/Trainer/{created.Id}", created);
+    }
 
-        [HttpPut]
-        public ActionResult Update([FromBody] Trainer trainer)
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, Trainer trainer)
+    {
+        if (_trainerDAO.GetTrainerById(id) == null)
         {
-            _trainerDao.Update(trainer);
-            return Ok(new { message = "Entrenador actualizado con éxito" });
+            return NotFound();
         }
+        trainer.Id = id;
+        _trainerDAO.UpdateTrainer(trainer);
+        return Ok(trainer);
+    }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        bool deleted = _trainerDAO.DeleteTrainerById(id);
+        if (!deleted)
         {
-            _trainerDao.Delete(id);
-            return Ok(new { message = "Entrenador eliminado con éxito" });
+            return NotFound();
         }
+        return NoContent();
     }
 }

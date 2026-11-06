@@ -1,46 +1,65 @@
+namespace api_prueba.Controllers;
 using dao_library;
 using entity_library;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
-namespace api_prueba.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class StudentController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class StudentController : ControllerBase
+    private readonly ILogger<StudentController> _logger;
+    private readonly StudentDAO _studentDAO;
+
+    public StudentController(ILogger<StudentController> logger, StudentDAO studentDAO)
     {
-        private readonly StudentDao _studentDao = new StudentDao();
+        _logger = logger;
+        _studentDAO = studentDAO;
+    }
 
-        [HttpGet]
-        public ActionResult<List<Student>> GetAll() => Ok(_studentDao.GetAll());
+    [HttpGet]
+    public ActionResult<List<Student>> GetAll()
+    {
+        return Ok(_studentDAO.GetAllStudents());
+    }
 
-        [HttpGet("{id}")]
-        public ActionResult<Student> GetById(int id)
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        Student? student = _studentDAO.GetStudentById(id);
+        if (student == null)
         {
-            var student = _studentDao.GetById(id);
-            if (student == null) return NotFound("Estudiante no encontrado");
-            return Ok(student);
+            return NotFound();
         }
+        return Ok(student);
+    }
 
-        [HttpPost]
-        public ActionResult Add([FromBody] Student student)
-        {
-            _studentDao.Add(student);
-            return Ok("Estudiante agregado correctamente");
-        }
+    [HttpPost]
+    public IActionResult Create(Student student)
+    {
+        Student created = _studentDAO.CreateStudent(student);
+        return Created($"/api/Student/{created.Id}", created);
+    }
 
-        [HttpPut]
-        public ActionResult Update([FromBody] Student student)
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, Student student)
+    {
+        if (_studentDAO.GetStudentById(id) == null)
         {
-            _studentDao.Update(student);
-            return Ok("Estudiante actualizado correctamente");
+            return NotFound();
         }
+        student.Id = id;
+        _studentDAO.UpdateStudent(student);
+        return Ok(student);
+    }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        bool deleted = _studentDAO.DeleteStudentById(id);
+        if (!deleted)
         {
-            _studentDao.Delete(id);
-            return Ok("Estudiante eliminado correctamente");
+            return NotFound();
         }
+        return NoContent();
     }
 }

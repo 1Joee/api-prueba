@@ -1,44 +1,65 @@
-using Microsoft.AspNetCore.Mvc;
+namespace api_prueba.Controllers;
 using dao_library;
-using System.Collections.Generic;
+using entity_library;
+using Microsoft.AspNetCore.Mvc;
 
-namespace api_prueba.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class TeamController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class TeamController : ControllerBase
+    private readonly ILogger<TeamController> _logger;
+    private readonly TeamDAO _teamDAO;
+
+    public TeamController(ILogger<TeamController> logger, TeamDAO teamDAO)
     {
-        private readonly TeamDao _teamDao = new TeamDao();
+        _logger = logger;
+        _teamDAO = teamDAO;
+    }
 
-        [HttpGet]
-        public ActionResult<List<Team>> GetAll() => Ok(_teamDao.GetAll());
+    [HttpGet]
+    public ActionResult<List<Team>> GetAll()
+    {
+        return Ok(_teamDAO.GetAllTeams());
+    }
 
-        [HttpGet("{id}")]
-        public ActionResult<Team> GetById(int id)
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        Team? team = _teamDAO.GetTeamById(id);
+        if (team == null)
         {
-            var team = _teamDao.GetById(id);
-            return team == null ? NotFound($"No se encontró el equipo con ID {id}") : Ok(team);
+            return NotFound();
         }
+        return Ok(team);
+    }
 
-        [HttpPost]
-        public ActionResult Add([FromBody] Team team)
-        {
-            _teamDao.Add(team);
-            return Ok(new { message = "Equipo agregado con éxito" });
-        }
+    [HttpPost]
+    public IActionResult Create(Team team)
+    {
+        Team created = _teamDAO.CreateTeam(team);
+        return Created($"/api/Team/{created.Id}", created);
+    }
 
-        [HttpPut]
-        public ActionResult Update([FromBody] Team team)
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, Team team)
+    {
+        if (_teamDAO.GetTeamById(id) == null)
         {
-            _teamDao.Update(team);
-            return Ok(new { message = "Equipo actualizado con éxito" });
+            return NotFound();
         }
+        team.Id = id;
+        _teamDAO.UpdateTeam(team);
+        return Ok(team);
+    }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        bool deleted = _teamDAO.DeleteTeamById(id);
+        if (!deleted)
         {
-            _teamDao.Delete(id);
-            return Ok(new { message = "Equipo eliminado con éxito" });
+            return NotFound();
         }
+        return NoContent();
     }
 }

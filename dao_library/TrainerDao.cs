@@ -1,33 +1,47 @@
-using System.Collections.Generic;
-using System.Linq;
+namespace dao_library;
+using entity_library;
 
-namespace dao_library
+public class TrainerDAO
 {
-    public class TrainerDao : IDao<Trainer>
+    public List<Trainer> GetAllTrainers()
     {
-        private static List<Trainer> _trainers = new List<Trainer>();
-        public List<Trainer> GetAll() => _trainers;
-        public Trainer GetById(int id)
-        {
-            // Como Trainer hereda de Person y no tiene un ID único en el UML, 
-            // podemos buscar por índice o DNI adaptado
-            return _trainers.ElementAtOrDefault(id)!;
-        }
-        public void Add(Trainer trainer) => _trainers.Add(trainer);
-        public void Delete(int id)
-        {
-            var trainer = GetById(id);
-            if (trainer != null) _trainers.Remove(trainer);
-        }
+        return MockDatabase.Trainers;
+    }
 
-        public void Update(Trainer trainer)
+    public Trainer? GetTrainerById(int id)
+    {
+        return MockDatabase.Trainers.FirstOrDefault(x => x.Id == id);
+    }
+
+    public Trainer CreateTrainer(Trainer entity)
+    {
+        int lastId = MockDatabase.Trainers.Count == 0 ? 0 : MockDatabase.Trainers.Max(x => x.Id);
+        entity.Id = lastId + 1;
+        MockDatabase.Trainers.Add(entity);
+        return entity;
+    }
+
+    public bool UpdateTrainer(Trainer entity)
+    {
+        Trainer? existing = GetTrainerById(entity.Id);
+        if (existing == null)
         {
-            // Si tenés una referencia directa o índice
-            var index = _trainers.FindIndex(t => t.Dni == trainer.Dni);
-            if (index != -1)
-            {
-                _trainers[index] = trainer;
-            }
+            return false;
         }
+        existing.Name = entity.Name;
+        existing.Age = entity.Age;
+        existing.Dni = entity.Dni;
+        return true;
+    }
+
+    public bool DeleteTrainerById(int id)
+    {
+        Trainer? existing = GetTrainerById(id);
+        if (existing == null)
+        {
+            return false;
+        }
+        MockDatabase.Trainers.Remove(existing);
+        return true;
     }
 }

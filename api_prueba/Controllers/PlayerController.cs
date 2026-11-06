@@ -1,51 +1,65 @@
-using Microsoft.AspNetCore.Mvc;
+namespace api_prueba.Controllers;
 using dao_library;
-using System.Collections.Generic;
+using entity_library;
+using Microsoft.AspNetCore.Mvc;
 
-namespace api_prueba.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class PlayerController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PlayerController : ControllerBase
+    private readonly ILogger<PlayerController> _logger;
+    private readonly PlayerDAO _playerDAO;
+
+    public PlayerController(ILogger<PlayerController> logger, PlayerDAO playerDAO)
     {
-        private readonly PlayerDao _playerDao = new PlayerDao();
+        _logger = logger;
+        _playerDAO = playerDAO;
+    }
 
-        [HttpGet]
-        public ActionResult<List<Player>> GetAll()
-        {
-            return Ok(_playerDao.GetAll());
-        }
+    [HttpGet]
+    public ActionResult<List<Player>> GetAll()
+    {
+        return Ok(_playerDAO.GetAllPlayers());
+    }
 
-        [HttpGet("{id}")]
-        public ActionResult<Player> GetById(int id)
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        Player? player = _playerDAO.GetPlayerById(id);
+        if (player == null)
         {
-            var player = _playerDao.GetById(id);
-            if (player == null)
-            {
-                return NotFound($"No se encontró al jugador con el ID {id}");
-            }
-            return Ok(player);
+            return NotFound();
         }
+        return Ok(player);
+    }
 
-        [HttpPost]
-        public ActionResult Add([FromBody] Player player)
-        {
-            _playerDao.Add(player);
-            return Ok(new { message = "Jugador agregado con éxito" });
-        }
+    [HttpPost]
+    public IActionResult Create(Player player)
+    {
+        Player created = _playerDAO.CreatePlayer(player);
+        return Created($"/api/Player/{created.Id}", created);
+    }
 
-        [HttpPut]
-        public ActionResult Update([FromBody] Player player)
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, Player player)
+    {
+        if (_playerDAO.GetPlayerById(id) == null)
         {
-            _playerDao.Update(player);
-            return Ok(new { message = "Jugador actualizado con éxito" });
+            return NotFound();
         }
+        player.Id = id;
+        _playerDAO.UpdatePlayer(player);
+        return Ok(player);
+    }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        bool deleted = _playerDAO.DeletePlayerById(id);
+        if (!deleted)
         {
-            _playerDao.Delete(id);
-            return Ok(new { message = "Jugador eliminado con éxito" });
+            return NotFound();
         }
+        return NoContent();
     }
 }

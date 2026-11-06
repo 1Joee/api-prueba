@@ -1,15 +1,38 @@
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace entity_library;
 
 public class Team
 {
-    public string Name {get; set;}
-    public string Category {get; set;}
+    private int id = 0;
+    private string name = "";
+    private string category = "";
+    private List<Player> players = new List<Player>();
 
-    public List<Player> Players {get; set;} = new List<Player>();
-
-    public Team (string name, string category)
+    public int Id
     {
-        Name = name;
-        Category = category;
+        get { return id; }
+        set { id = value; }
+    }
+
+    [Required]
+    [StringLength(100, MinimumLength = 3)]
+    public string Name
+    {
+        get { return name; }
+        set { name = value; }
+    }
+
+    [Required]
+    public string Category
+    {
+        get { return category; }
+        set { category = value; }
+    }
+
+    public List<Player> Players
+    {
+        get { return players; }
+        set { players = value; }
     }
 }

@@ -1,11 +1,19 @@
-using System.Collections.Generic;
+namespace entity_library;
+
 public class Player : Person
 {
-   public int Numero {get; set;}
-   public List<Team> Teams {get; set;} = new List<Team>();
+    private int numero = 0;
+    private List<Team> teams = new List<Team>();
 
-   public Player (string name, int age, string dni, int numero) : base(name, age, dni)
-   {
-      Numero = numero;
-   }
-}   
+    public int Numero
+    {
+        get { return numero; }
+        set { numero = value; }
+    }
+
+    public List<Team> Teams
+    {
+        get { return teams; }
+        set { teams = value; }
+    }
+}

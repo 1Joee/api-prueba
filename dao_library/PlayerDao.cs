@@ -1,41 +1,49 @@
-using System.Collections.Generic;
-using System.Linq;
+namespace dao_library;
+using entity_library;
 
-namespace dao_library
+public class PlayerDAO
 {
-    public class PlayerDao : IDao<Player>
+    public List<Player> GetAllPlayers()
     {
-        private static List<Player> _players = new List<Player>();
-        public List<Player> GetAll()
+        return MockDatabase.Players;
+    }
+
+    public Player? GetPlayerById(int id)
+    {
+        return MockDatabase.Players.FirstOrDefault(x => x.Id == id);
+    }
+
+    public Player CreatePlayer(Player entity)
+    {
+        int lastId = MockDatabase.Players.Count == 0 ? 0 : MockDatabase.Players.Max(x => x.Id);
+        entity.Id = lastId + 1;
+        MockDatabase.Players.Add(entity);
+        return entity;
+    }
+
+    public bool UpdatePlayer(Player entity)
+    {
+        Player? existing = GetPlayerById(entity.Id);
+        if (existing == null)
         {
-            return _players;
+            return false;
         }
-        public Player GetById(int id)
+        existing.Name = entity.Name;
+        existing.Age = entity.Age;
+        existing.Dni = entity.Dni;
+        existing.Numero = entity.Numero;
+        existing.Teams = entity.Teams;
+        return true;
+    }
+
+    public bool DeletePlayerById(int id)
+    {
+        Player? existing = GetPlayerById(id);
+        if (existing == null)
         {
-            // Busca al jugador por su número o índice
-            return _players.FirstOrDefault(p => p.Numero == id);
+            return false;
         }
-        public void Add(Player player)
-        {
-            _players.Add(player);
-        }
-        public void Delete(int id)
-        {
-            var player = GetById(id);
-            if (player != null)
-            {
-                _players.Remove(player);
-            }
-        }
-        public void Update(Player player)
-        {
-            var existingPlayer = GetById(player.Numero);
-            if (existingPlayer != null)
-            {
-                existingPlayer.Name = player.Name;
-                existingPlayer.Age = player.Age;
-                existingPlayer.Dni = player.Dni;
-            }
-        }
+        MockDatabase.Players.Remove(existing);
+        return true;
     }
 }
