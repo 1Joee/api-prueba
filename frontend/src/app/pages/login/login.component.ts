@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { LoginModel } from '../../models/LoginModel';
@@ -18,6 +19,8 @@ export class LoginComponent {
   public token = signal<string | null>(null);
   public errorMessage = signal<string | null>(null);
 
+  private router = inject(Router);
+
   constructor(private userService: UserService) {}
 
   login(): void {
@@ -33,6 +36,7 @@ export class LoginComponent {
       next: (response) => {
         this.token.set(response.token);
         localStorage.setItem('token', response.token);
+        this.router.navigate(['/users']);
       },
       error: (error) => {
         this.errorMessage.set(

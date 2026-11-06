@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { UserModel } from '../../models/UserModel';
 
 @Component({
   selector: 'app-user-list',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
 })

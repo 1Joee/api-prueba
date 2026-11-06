@@ -1,5 +1,6 @@
 <div class="user-list-container">
   <h2>Lista de usuarios</h2>
+  <a routerLink="/login">Volver al login</a>
 
   @if (users$ | async; as users) {
     @if (users.length > 0) {
