@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { LoginModel } from '../models/LoginModel';
 import { LoginResponse } from '../models/LoginResponse';
 import { UserModel } from '../models/UserModel';
+import { UserCreateModel } from '../models/UserCreateModel';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +20,9 @@ export class UserService {
 
   getUsers(): Observable<UserModel[]> {
     return this.http.get<UserModel[]>(`${this.API_URL}/User`);
+  }
+
+  createUser(user: UserCreateModel): Observable<UserModel> {
+    return this.http.post<UserModel>(`${this.API_URL}/User`, user);
   }
 }
