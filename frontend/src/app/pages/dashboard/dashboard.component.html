@@ -1,0 +1,48 @@
+<div class="dashboard">
+    <header class="dashboard-header">
+        <h1>Dashboard</h1>
+        <nav class="dashboard-nav">
+            <a routerLink="/users">Usuarios</a>
+            <a routerLink="/users/new">Nuevo usuario</a>
+            <button type="button" (click)="logout()">Cerrar sesión</button>
+        </nav>
+    </header>
+
+    @if (loading()) {
+        <p class="loading-message">Cargando datos...</p>
+    } @else if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+    } @else {
+        <section class="cards">
+            <article class="card">
+                <p class="card-title">Total de usuarios</p>
+                <p class="card-value">{{ totalUsers() }}</p>
+            </article>
+            <article class="card">
+                <p class="card-title">Administradores</p>
+                <p class="card-value">{{ totalAdmins() }}</p>
+            </article>
+            <article class="card">
+                <p class="card-title">Usuarios comunes</p>
+                <p class="card-value">{{ totalCommon() }}</p>
+            </article>
+        </section>
+
+        <section class="last-users">
+            <h2>Últimos usuarios registrados</h2>
+            @if (lastUsers().length > 0) {
+                <ul>
+                    @for (user of lastUsers(); track user.id) {
+                        <li>
+                            <span class="user-name">{{ user.name }}</span>
+                            <span class="user-email">{{ user.email }}</span>
+                            <span class="user-role">{{ user.role }}</span>
+                        </li>
+                    }
+                </ul>
+            } @else {
+                <p class="empty-message">No hay usuarios registrados.</p>
+            }
+        </section>
+    }
+</div>
